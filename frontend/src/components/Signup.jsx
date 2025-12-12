@@ -13,6 +13,11 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Minimal client-side validation: RED->GREEN for TC-A002
+    if (!username || !email || !password) {
+      setError('All fields required');
+      return;
+    }
     try {
       const response = await axios.post("http://localhost:4001/user/sign-up", { username, email, password });
       if (response.status === 200 || response.status === 201) {
