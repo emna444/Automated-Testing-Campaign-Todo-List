@@ -1,284 +1,135 @@
 Feature: Todo List Application
 
-  # User Authentication
-  Scenario: Successful Sign Up
-    Given the user is on the sign-up page
-    When the user enters a valid username, email, and password and clicks "Sign Up"
-    Then the user should see a success message and be redirected to the login page
+  # ==========================================
+  # Authentication Test Cases
+  # ==========================================
 
-  Scenario: Sign Up with Existing Email
-    Given the user is on the sign-up page
-    When the user enters an email that is already registered and clicks "Sign Up"
-    Then the user should see an error message indicating the email is already in use
+  Scenario: TC-A001 - Signup with valid inputs
+    Given the user is not registered
+    When the user opens the signup page
+    And the user enters valid email and password
+    And the user clicks Signup
+    Then the user should be created and redirected to login
 
-  Scenario: Sign Up with Invalid Email
-    Given the user is on the sign-up page
-    When the user enters an invalid email and clicks "Sign Up"
-    Then the user should see an error message indicating the email format is invalid
+  Scenario: TC-A002 - Signup with missing fields
+    Given the user is on the signup page
+    When the user leaves fields empty
+    And the user clicks Signup
+    Then the user should see an error "All fields required"
 
-  Scenario: Sign Up with Short Password
-    Given the user is on the sign-up page
-    When the user enters a password shorter than 6 characters and clicks "Sign Up"
-    Then the user should see an error message indicating the password is too short
+  Scenario: TC-A003 - Signup with invalid email
+    Given the user is on the signup page
+    When the user enters invalid email
+    And the user enters valid password
+    And the user submits the form
+    Then the user should see an error "Invalid email format"
 
-  Scenario: Sign Up with Empty Fields
-    Given the user is on the sign-up page
-    When the user leaves all fields empty and clicks "Sign Up"
-    Then the user should see an error message indicating all fields are required
+  Scenario: TC-A004 - Login with valid credentials
+    Given a user exists in the system
+    When the user enters correct email and password
+    And the user clicks Login
+    Then the dashboard should load and JWT should be stored
 
-  Scenario: Successful Login
+  Scenario: TC-A005 - Login with wrong password
+    Given a user exists in the system
+    When the user enters correct email
+    And the user enters wrong password
+    Then the user should see an error "Invalid credentials"
+
+  Scenario: TC-A006 - Login with missing fields
     Given the user is on the login page
-    When the user enters a valid email and password and clicks "Login"
-    Then the user should be logged in and see their todo list
+    When the user leaves fields empty
+    And the user clicks Login
+    Then an error message should be displayed
 
-  Scenario: Login with Wrong Password
-    Given the user is on the login page
-    When the user enters a valid email and an incorrect password and clicks "Login"
-    Then the user should see an error message indicating invalid credentials
+  # ==========================================
+  # Access Control Test Cases
+  # ==========================================
 
-  Scenario: Login with Unregistered Email
-    Given the user is on the login page
-    When the user enters an unregistered email and clicks "Login"
-    Then the user should see an error message indicating the account does not exist
-
-  Scenario: Login with Empty Fields
-    Given the user is on the login page
-    When the user leaves all fields empty and clicks "Login"
-    Then the user should see an error message indicating all fields are required
-
-  Scenario: Logout
-    Given the user is logged in
-    When the user clicks the "Logout" button
-    Then the user should be logged out and redirected to the login page
-
-  # Todo Management
-  Scenario: Add a New Todo
-    Given the user is logged in and on their todo list page
-    When the user enters a new todo item and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Empty Text
-    Given the user is logged in and on their todo list page
-    When the user leaves the todo text empty and clicks "Add"
-    Then the user should see an error message indicating the todo text is required
-
-  Scenario: Add Todo with Special Characters
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item with special characters and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Duplicate Todo
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item that already exists and clicks "Add"
-    Then the user should see an error message indicating duplicate todos are not allowed
-
-  Scenario: View Todo List
-    Given the user is logged in
-    When the user navigates to the todo list page
-    Then the user should see all their todo items
-
-  Scenario: Mark Todo as Completed
-    Given the user has a todo item in their list
-    When the user marks the todo as completed
-    Then the todo item should be shown as completed
-
-  Scenario: Mark Todo as Not Completed
-    Given the user has a completed todo item in their list
-    When the user marks the todo as not completed
-    Then the todo item should be shown as not completed
-
-  Scenario: Edit Todo Item
-    Given the user has a todo item in their list
-    When the user edits the todo text and saves changes
-    Then the updated todo should appear in the list
-
-  Scenario: Edit Todo to Empty Text
-    Given the user has a todo item in their list
-    When the user edits the todo text to be empty and saves changes
-    Then the user should see an error message indicating the todo text is required
-
-  Scenario: Delete a Todo
-    Given the user has a todo item in their list
-    When the user clicks the delete button for that todo
-    Then the todo item should be removed from the list
-
-  Scenario: Delete All Todos
-    Given the user has multiple todo items in their list
-    When the user clicks the delete button for each todo
-    Then the todo list should be empty
-
-  Scenario: Add Todo with Maximum Length
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item with the maximum allowed length and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo Exceeding Maximum Length
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item exceeding the maximum allowed length and clicks "Add"
-    Then the user should see an error message indicating the todo text is too long
-
-  Scenario: Add Todo with Only Spaces
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item with only spaces and clicks "Add"
-    Then the user should see an error message indicating the todo text is required
-
-  Scenario: Add Todo with HTML Tags
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing HTML tags and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Numbers
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing only numbers and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Mixed Content
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing letters, numbers, and symbols and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Unicode Characters
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing Unicode characters and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Emoji
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing emoji and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Line Breaks
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing line breaks and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Tab Characters
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing tab characters and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Quotes
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing single and double quotes and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Backslash
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a backslash and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Forward Slash
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a forward slash and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Comma
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a comma and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Period
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a period and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Exclamation Mark
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing an exclamation mark and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Question Mark
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a question mark and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Parentheses
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing parentheses and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Brackets
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing brackets and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Braces
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing braces and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Colon
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a colon and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Semicolon
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a semicolon and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with At Symbol
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing an at symbol and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Hash Symbol
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a hash symbol and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Dollar Sign
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a dollar sign and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Percent Sign
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a percent sign and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Ampersand
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing an ampersand and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Asterisk
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing an asterisk and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Underscore
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing an underscore and clicks "Add"
-    Then the new todo should appear in the list
-
-  Scenario: Add Todo with Pipe Symbol
-    Given the user is logged in and on their todo list page
-    When the user enters a todo item containing a pipe symbol and clicks "Add"
-    Then the new todo should appear in the list
-
-  # Error Handling & Edge Cases
-  Scenario: Backend Server Down
-    Given the backend server is not running
-    When the user tries to log in
-    Then the user should see an error message indicating a server error
-
-  Scenario: Database Not Connected
-    Given the database is not connected
-    When the user tries to sign up
-    Then the user should see an error message indicating a database error
-
-  Scenario: Unauthorized Access to Todos
+  Scenario: TC-AC001 - Access dashboard without login
     Given the user is not logged in
-    When the user tries to access the todo list page
-    Then the user should be redirected to the login page
+    When the user opens "/" root to dashboard in browser
+    Then the user should be redirected to login OR receive 401 Unauthorized
 
-  Scenario: Access Another User's Todos
-    Given the user is logged in
-    When the user tries to access another user's todo list
-    Then the user should see an error message indicating unauthorized access
+  # ==========================================
+  # Task Management Test Cases
+  # ==========================================
 
-  Scenario: Session Expired
+  Scenario: TC-T001 - Create task with valid title
     Given the user is logged in
-    When the user's session expires
-    Then the user should be logged out and redirected to the login page
+    When the user enters a task title
+    And the user clicks Add
+    Then the task should appear in list with status 201
+
+  Scenario: TC-T002 - Create empty task
+    Given the user is logged in
+    When the user leaves title empty
+    And the user clicks Add
+    Then an error should be shown and no task should be created
+
+  Scenario: TC-T003 - Edit task
+    Given a task exists in the system
+    When the user clicks Edit
+    And the user modifies the title
+    And the user saves changes
+    Then the task should be updated successfully
+
+  Scenario: TC-T004 - Delete task
+    Given a task exists in the system
+    When the user clicks Delete
+    Then the task should be removed from list with status 200
+
+  Scenario: TC-T005 - Toggle complete/incomplete
+    Given a task exists in the system
+    When the user clicks checkbox
+    Then the UI and database should be updated
+
+  Scenario: TC-T006 - Fetch task list
+    Given the user is logged in and tasks exist
+    When the user logs in
+    And the user views dashboard
+    Then the list should load with status 200 OK
+
+  # ==========================================
+  # Frontend Behavior Test Cases
+  # ==========================================
+
+  Scenario: TC-F001 - Signup form validation
+    Given the user is on the signup page
+    When the user enters invalid email or password
+    And the user submits the form
+    Then validation errors should be displayed
+
+  Scenario: TC-F002 - UI feedback after task creation
+    Given the user is logged in
+    When the user adds a valid task
+    Then feedback "Task added" should be displayed
+
+  Scenario: TC-F003 - Navigation after login
+    Given a user exists in the system
+    When the user logs in with valid credentials
+    Then the user should be redirected to dashboard
+
+  # ==========================================
+  # Backend API Test Cases
+  # ==========================================
+
+  Scenario: TC-API001 - POST /signup success
+    Given the email is unused
+    When a POST request is sent to /signup with valid data
+    Then the response should be 201 Created with success message
+
+  Scenario: TC-API002 - POST /login returns JWT
+    Given a user exists in the system
+    When a POST request is sent to /login
+    Then the response should be 200 OK with token returned
+
+  Scenario: TC-API003 - GET /tasks without token
+    Given no authentication token is provided
+    When a GET request is sent to /tasks with no Authorization header
+    Then the response should be 401 Unauthorized
+
+  Scenario: TC-API004 - PUT /tasks/:id invalid ID
+    Given the user is logged in
+    When a PUT request is called with invalid task ID
+    Then the response should be 404 Task not found

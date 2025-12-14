@@ -1,0 +1,21 @@
+{
+  "name": "bdd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js app.feature --require steps/**/*.js",
+    "test:bdd": "cucumber-js app.feature --require steps/**/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@cucumber/cucumber": "^12.4.0"
+  },
+  "devDependencies": {
+    "axios": "^1.13.2",
+    "chai": "^6.2.1"
+  }
+}
