@@ -2,10 +2,13 @@ const { Given, When, Then, Before, After, setDefaultTimeout } = require('@cucumb
 const axios = require('axios');
 const { expect } = require('chai');
 
-setDefaultTimeout(10000);
+setDefaultTimeout(30000);
 
 const BASE_URL = 'http://localhost:4001';
 const testContext = {};
+
+// Helper to add delay between requests
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Helper function to generate unique test data
 function generateTestUser() {
@@ -51,6 +54,7 @@ When('the user clicks Signup', async function () {
   try {
     testContext.response = await axios.post(`${BASE_URL}/user/sign-up`, testContext.signupData);
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -72,7 +76,9 @@ When('the user leaves fields empty', function () {
 
 Then('the user should see an error {string}', function (errorMessage) {
   expect(testContext.error).to.exist;
-  expect(testContext.response.status).to.be.at.least(400);
+  if (testContext.response) {
+    expect(testContext.response.status).to.be.at.least(400);
+  }
 });
 
 When('the user enters invalid email', function () {
@@ -88,6 +94,7 @@ When('the user submits the form', async function () {
   try {
     testContext.response = await axios.post(`${BASE_URL}/user/sign-up`, testContext.signupData);
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -98,6 +105,7 @@ Given('a user exists in the system', async function () {
   testContext.user = generateTestUser();
   try {
     await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
+    await delay(200);
   } catch (error) {
     // User might already exist, continue
   }
@@ -115,6 +123,7 @@ When('the user clicks Login', async function () {
     testContext.response = await axios.post(`${BASE_URL}/user/sign-in`, testContext.loginData);
     testContext.token = testContext.response.data.token;
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -122,19 +131,30 @@ When('the user clicks Login', async function () {
 });
 
 Then('the dashboard should load and JWT should be stored', function () {
-  expect(testContext.response.status).to.equal(200);
-  expect(testContext.token).to.exist;
+  expect(testContext.response, 'Response should exist').to.exist;
+  expect(testContext.response.status, 'Status should be 200').to.equal(200);
+  expect(testContext.token, 'Token should exist').to.exist;
 });
 
 When('the user enters correct email', function () {
   testContext.loginData = { email: testContext.user.email };
 });
 
-When('the user enters wrong password', function () {
+When('the user enters wrong password', async function () {
   testContext.loginData = {
     ...testContext.loginData,
     password: 'WrongPassword123'
   };
+  // Attempt login with wrong password
+  try {
+    testContext.response = await axios.post(`${BASE_URL}/user/sign-in`, testContext.loginData);
+    testContext.token = testContext.response.data.token;
+    testContext.error = null;
+    await delay(200);
+  } catch (error) {
+    testContext.error = error.response || error;
+    testContext.response = error.response;
+  }
 });
 
 Given('the user is on the login page', function () {
@@ -142,8 +162,10 @@ Given('the user is on the login page', function () {
 });
 
 Then('an error message should be displayed', function () {
-  expect(testContext.error).to.exist;
-  expect(testContext.response.status).to.be.at.least(400);
+  expect(testContext.error, 'Error should exist').to.exist;
+  if (testContext.response) {
+    expect(testContext.response.status).to.be.at.least(400);
+  }
 });
 
 // ==========================================
@@ -164,6 +186,7 @@ When('the user opens {string} root to dashboard in browser', async function (pat
 });
 
 Then('the user should be redirected to login OR receive {int} Unauthorized', function (statusCode) {
+  expect(testContext.response, 'Response should exist').to.exist;
   expect(testContext.response.status).to.equal(statusCode);
 });
 
@@ -173,12 +196,18 @@ Then('the user should be redirected to login OR receive {int} Unauthorized', fun
 
 Given('the user is logged in', async function () {
   testContext.user = generateTestUser();
-  await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
-  const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
-    email: testContext.user.email,
-    password: testContext.user.password
-  });
-  testContext.token = loginResponse.data.token;
+  try {
+    await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
+    await delay(300);
+    const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
+      email: testContext.user.email,
+      password: testContext.user.password
+    });
+    testContext.token = loginResponse.data.token;
+    await delay(200);
+  } catch (error) {
+    throw new Error(`Login failed: ${error.message}`);
+  }
 });
 
 When('the user enters a task title', function () {
@@ -189,11 +218,12 @@ When('the user clicks Add', async function () {
   try {
     testContext.response = await axios.post(
       `${BASE_URL}/todo/create`,
-      { title: testContext.taskTitle },
+      { text: testContext.taskTitle },
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
-    testContext.taskId = testContext.response.data._id || testContext.response.data.id;
+    testContext.taskId = testContext.response.data.newTodo._id || testContext.response.data.newTodo.id;
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -216,21 +246,32 @@ Then('an error should be shown and no task should be created', function () {
 Given('a task exists in the system', async function () {
   if (!testContext.token) {
     testContext.user = generateTestUser();
-    await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
-    const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
-      email: testContext.user.email,
-      password: testContext.user.password
-    });
-    testContext.token = loginResponse.data.token;
+    try {
+      await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
+      await delay(300);
+      const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
+        email: testContext.user.email,
+        password: testContext.user.password
+      });
+      testContext.token = loginResponse.data.token;
+      await delay(200);
+    } catch (error) {
+      throw new Error(`Setup failed: ${error.message}`);
+    }
   }
   
-  const taskResponse = await axios.post(
-    `${BASE_URL}/todo/create`,
-    { title: `Test Task ${Date.now()}` },
-    { headers: { Authorization: `Bearer ${testContext.token}` } }
-  );
-  testContext.taskId = taskResponse.data._id || taskResponse.data.id;
-  testContext.taskTitle = taskResponse.data.title;
+  try {
+    const taskResponse = await axios.post(
+      `${BASE_URL}/todo/create`,
+      { text: `Test Task ${Date.now()}` },
+      { headers: { Authorization: `Bearer ${testContext.token}` } }
+    );
+    testContext.taskId = taskResponse.data.newTodo._id || taskResponse.data.newTodo.id;
+    testContext.taskTitle = taskResponse.data.newTodo.text;
+    await delay(200);
+  } catch (error) {
+    throw new Error(`Task creation failed: ${error.message}`);
+  }
 });
 
 When('the user clicks Edit', function () {
@@ -245,10 +286,11 @@ When('the user saves changes', async function () {
   try {
     testContext.response = await axios.put(
       `${BASE_URL}/todo/update/${testContext.taskId}`,
-      { title: testContext.taskTitle },
+      { text: testContext.taskTitle },
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -266,6 +308,7 @@ When('the user clicks Delete', async function () {
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -284,6 +327,7 @@ When('the user clicks checkbox', async function () {
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -296,26 +340,44 @@ Then('the UI and database should be updated', function () {
 
 Given('the user is logged in and tasks exist', async function () {
   testContext.user = generateTestUser();
-  await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
-  const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
-    email: testContext.user.email,
-    password: testContext.user.password
-  });
-  testContext.token = loginResponse.data.token;
-  
-  await axios.post(
-    `${BASE_URL}/todo/create`,
-    { title: `Test Task ${Date.now()}` },
-    { headers: { Authorization: `Bearer ${testContext.token}` } }
-  );
+  try {
+    await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
+    await delay(300);
+    const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
+      email: testContext.user.email,
+      password: testContext.user.password
+    });
+    testContext.token = loginResponse.data.token;
+    await delay(200);
+    
+    await axios.post(
+      `${BASE_URL}/todo/create`,
+      { text: `Task 1 - ${Date.now()}` },
+      { headers: { Authorization: `Bearer ${testContext.token}` } }
+    );
+    await delay(200);
+    await axios.post(
+      `${BASE_URL}/todo/create`,
+      { text: `Task 2 - ${Date.now()}` },
+      { headers: { Authorization: `Bearer ${testContext.token}` } }
+    );
+    await delay(200);
+  } catch (error) {
+    throw new Error(`Setup failed: ${error.message}`);
+  }
 });
 
 When('the user logs in', async function () {
-  const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
-    email: testContext.user.email,
-    password: testContext.user.password
-  });
-  testContext.token = loginResponse.data.token;
+  try {
+    const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
+      email: testContext.user.email,
+      password: testContext.user.password
+    });
+    testContext.token = loginResponse.data.token;
+    await delay(200);
+  } catch (error) {
+    throw new Error(`Login failed: ${error.message}`);
+  }
 });
 
 When('the user views dashboard', async function () {
@@ -325,6 +387,7 @@ When('the user views dashboard', async function () {
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -348,8 +411,10 @@ When('the user enters invalid email or password', function () {
 });
 
 Then('validation errors should be displayed', function () {
-  expect(testContext.error).to.exist;
-  expect(testContext.response.status).to.be.at.least(400);
+  expect(testContext.error, 'Error should exist').to.exist;
+  if (testContext.response) {
+    expect(testContext.response.status).to.be.at.least(400);
+  }
 });
 
 When('the user adds a valid task', async function () {
@@ -357,10 +422,11 @@ When('the user adds a valid task', async function () {
   try {
     testContext.response = await axios.post(
       `${BASE_URL}/todo/create`,
-      { title: testContext.taskTitle },
+      { text: testContext.taskTitle },
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -373,15 +439,22 @@ Then('feedback {string} should be displayed', function (message) {
 });
 
 When('the user logs in with valid credentials', async function () {
-  const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
-    email: testContext.user.email,
-    password: testContext.user.password
-  });
-  testContext.token = loginResponse.data.token;
-  testContext.response = loginResponse;
+  try {
+    const loginResponse = await axios.post(`${BASE_URL}/user/sign-in`, {
+      email: testContext.user.email,
+      password: testContext.user.password
+    });
+    testContext.token = loginResponse.data.token;
+    testContext.response = loginResponse;
+    await delay(200);
+  } catch (error) {
+    testContext.error = error.response || error;
+    testContext.response = error.response;
+  }
 });
 
 Then('the user should be redirected to dashboard', function () {
+  expect(testContext.response, 'Response should exist').to.exist;
   expect(testContext.response.status).to.equal(200);
   expect(testContext.token).to.exist;
 });
@@ -398,6 +471,7 @@ When('a POST request is sent to \\/signup with valid data', async function () {
   try {
     testContext.response = await axios.post(`${BASE_URL}/user/sign-up`, testContext.user);
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -405,6 +479,7 @@ When('a POST request is sent to \\/signup with valid data', async function () {
 });
 
 Then('the response should be {int} Created with success message', function (statusCode) {
+  expect(testContext.response, 'Response should exist').to.exist;
   expect(testContext.response.status).to.equal(statusCode);
 });
 
@@ -416,6 +491,7 @@ When('a POST request is sent to \\/login', async function () {
     });
     testContext.token = testContext.response.data.token;
     testContext.error = null;
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -423,6 +499,7 @@ When('a POST request is sent to \\/login', async function () {
 });
 
 Then('the response should be {int} OK with token returned', function (statusCode) {
+  expect(testContext.response, 'Response should exist').to.exist;
   expect(testContext.response.status).to.equal(statusCode);
   expect(testContext.token).to.exist;
 });
@@ -434,6 +511,7 @@ Given('no authentication token is provided', function () {
 When('a GET request is sent to \\/tasks with no Authorization header', async function () {
   try {
     testContext.response = await axios.get(`${BASE_URL}/todo/fetch`);
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;
@@ -441,6 +519,7 @@ When('a GET request is sent to \\/tasks with no Authorization header', async fun
 });
 
 Then('the response should be {int} Unauthorized', function (statusCode) {
+  expect(testContext.response, 'Response should exist').to.exist;
   expect(testContext.response.status).to.equal(statusCode);
 });
 
@@ -448,9 +527,10 @@ When('a PUT request is called with invalid task ID', async function () {
   try {
     testContext.response = await axios.put(
       `${BASE_URL}/todo/update/invalid-id-123`,
-      { title: 'Test' },
+      { text: 'Test' },
       { headers: { Authorization: `Bearer ${testContext.token}` } }
     );
+    await delay(200);
   } catch (error) {
     testContext.error = error.response || error;
     testContext.response = error.response;

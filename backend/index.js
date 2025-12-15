@@ -10,9 +10,6 @@ dotenv.config();
 
 // port
 const port = process.env.PORT || 4002;
-app.listen(port, () => {
-    console.log(`server up on ${port}`);
-});
 
 // database connection
 const DB_URI = process.env.MONGODB_URI || "mongodb+srv://harshit:9512007h*H@cluster0.3s1ed.mongodb.net/todo_app";
@@ -37,3 +34,7 @@ app.use("/user", userRoute);
 app.get(`/`,(req,res) => {
     res.send(`TODO App`);
 })
+
+app.listen(port, () => {
+    console.log(`server up on ${port}`);
+});
