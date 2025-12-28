@@ -1,0 +1,28 @@
+{
+  "name": "automated-testing-campaign-todo-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "test": "mocha tests --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emna444/Automated-Testing-Campaign-Todo-List.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/emna444/Automated-Testing-Campaign-Todo-List/issues"
+  },
+  "homepage": "https://github.com/emna444/Automated-Testing-Campaign-Todo-List#readme",
+  "devDependencies": {
+    "chai": "^6.2.1",
+    "chromedriver": "^143.0.1",
+    "mocha": "^11.7.5",
+    "selenium-webdriver": "^4.39.0"
+  }
+}
