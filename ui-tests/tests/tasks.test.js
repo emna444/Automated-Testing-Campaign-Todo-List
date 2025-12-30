@@ -3,27 +3,44 @@ const { By, until } = require("selenium-webdriver");
 
 const getDriver = require("../utils/driver");
 const LoginPage = require("../pages/LoginPage");
+const SignupPage = require("../pages/SignupPage");
 const DashboardPage = require("../pages/DashboardPage");
 
 describe("Task Management Tests", function () {
   this.timeout(60000);
   let driver;
+  let testUser;
 
-  const EMAIL = "test1@gmail.com";
-  const PASSWORD = "testuser123";
+  before(async () => {
+    // Create a test user once for all task tests
+    testUser = {
+      email: `task@example.com`,
+      password: "TestPass123!",
+      username: `taskuser-${Date.now()}`
+    };
+
+    driver = await getDriver();
+    const signupPage = new SignupPage(driver);
+    await signupPage.open();
+    await driver.sleep(500);
+    await signupPage.signup(testUser.email, testUser.password, testUser.username);
+    await driver.sleep(1000);
+    await driver.wait(until.urlContains("/login"), 8000);
+    await driver.quit();
+  });
 
   beforeEach(async () => {
     driver = await getDriver();
 
     const loginPage = new LoginPage(driver);
     await loginPage.open();
-    await loginPage.login(EMAIL, PASSWORD);
+    await driver.sleep(500);
+    await loginPage.login(testUser.email, testUser.password);
+    await driver.sleep(1500);
 
-    // Wait until login completes (protected route)
-    await driver.wait(async () => {
-      const url = await driver.getCurrentUrl();
-      return !url.includes("/login");
-    }, 10000);
+    // Wait for dashboard to be ready
+    const dashboard = new DashboardPage(driver);
+    await dashboard.waitForDashboard();
   });
 
   afterEach(async () => {

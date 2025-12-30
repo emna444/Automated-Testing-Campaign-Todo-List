@@ -8,6 +8,25 @@ const SignupPage = require("../pages/SignupPage");
 describe("Authentication Tests", function () {
   this.timeout(60000);
   let driver;
+  let validUser;
+
+  before(async () => {
+    // Create a test user once for TC-A004
+    validUser = {
+      email: `test@example.com`,
+      password: "TestPass123!",
+      username: `authuser-${Date.now()}`
+    };
+
+    driver = await getDriver();
+    const signupPage = new SignupPage(driver);
+    await signupPage.open();
+    await driver.sleep(500);
+    await signupPage.signup(validUser.email, validUser.password, validUser.username);
+    await driver.sleep(1000);
+    await driver.wait(until.urlContains("/login"), 8000);
+    await driver.quit();
+  });
 
   beforeEach(async () => {
     driver = await getDriver();
@@ -67,11 +86,17 @@ describe("Authentication Tests", function () {
     const loginPage = new LoginPage(driver);
     await loginPage.open();
     await driver.sleep(500);
-    await loginPage.login("test1@gmail.com", "testuser123");
-    await driver.sleep(1000);
+    await loginPage.login(validUser.email, validUser.password);
+    await driver.sleep(1500);
 
+    // Verify successful login by checking URL redirects to home
     const url = await driver.getCurrentUrl();
-    expect(url).to.include("http://localhost:5173/");
+    expect(url).to.equal("http://localhost:5173/");
+    
+    // Verify dashboard elements are present (confirms authentication worked)
+    await driver.sleep(500);
+    const taskInput = await driver.findElements(By.xpath("//input[@type='text']"));
+    expect(taskInput.length).to.be.greaterThan(0);
   });
 
 
