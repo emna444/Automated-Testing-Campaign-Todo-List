@@ -1,0 +1,612 @@
+{ 
+	"info": {
+		"_postman_id": "751c5fd4-8093-40ea-8629-7fb41ebaa3af",
+		"name": "Todo API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41517414"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register - Success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate unique email using timestamp\r",
+									"pm.environment.set('uniqueEmail', 'testuser' + Date.now() + '@example.com');\r",
+									"pm.environment.set('uniqueUsername', 'testuser' + Date.now());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test 1 : Vérifier le status code\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Test 2 : Vérifier que la réponse contient un message\r",
+									"pm.test(\"Response has success message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Test 3 : Vérifier le temps de réponse\r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"// Test 4 : Vérifier que la réponse est du JSON\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{uniqueUsername}}\",\r\n  \"email\": \"{{uniqueEmail}}\",\r\n  \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/user/sign-up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register - Email Already Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+								"pm.test(\"Status 400\", () => pm.response.to.have.status(400));\r",
+								"pm.test(\"Has error\", () => pm.expect(pm.response.json().message).to.exist);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"testuser1\",\r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/user/sign-up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register - Invalid Input",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+								"pm.test(\"Status 400\", () => pm.response.to.have.status(400));\r",
+								"pm.test(\"Has errors\", () => pm.expect(pm.response.json().errors).to.exist);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"ab\",\r\n  \"email\": \"invalidemail\",\r\n  \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/user/sign-up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login-Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+								"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+								"pm.test(\"Has token\", () => {\r",
+								"    const token = pm.response.json().token;\r",
+								"    pm.expect(token).to.exist;\r",
+								"    pm.environment.set('authToken', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/user/sign-in",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login-Wrong Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+								"pm.test(\"Status 400\", () => pm.response.to.have.status(400));\r",
+								"pm.test(\"Has error\", () => pm.expect(pm.response.json().message).to.exist);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"wrongpassword\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/user/sign-in",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout-Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 404\", () => pm.response.to.have.status(404));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:4001/user/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Todo CRUD",
+			"item": [
+				{
+					"name": "CreateTask",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Todo was created\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.newTodo).to.exist;\r",
+									"    pm.expect(jsonData.newTodo.text).to.eql(\"Buy groceries\");\r",
+									"    pm.expect(jsonData.newTodo.isComplete).to.eql(false);\r",
+									"    \r",
+									"    // 💾 SAUVEGARDER L'ID DU TODO\r",
+									"    pm.environment.set(\"todoId\", jsonData.newTodo._id);\r",
+									"    console.log(\"✅ Todo ID saved:\", jsonData.newTodo._id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Todo has required fields\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var todo = jsonData.newTodo;\r",
+									"    \r",
+									"    pm.expect(todo).to.have.property('_id');\r",
+									"    pm.expect(todo).to.have.property('text');\r",
+									"    pm.expect(todo).to.have.property('isComplete');\r",
+									"    pm.expect(todo).to.have.property('user');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"text\": \"Buy groceries\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/todo/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"todo",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllTasks",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"TodoList was retrieved\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.todoList).to.exist;\r",
+									"    pm.expect(jsonData.todoList).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"TodoList has required fields\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (jsonData.todoList.length > 0) {\r",
+									"        var todo = jsonData.todoList[0];\r",
+									"        \r",
+									"        pm.expect(todo).to.have.property('_id');\r",
+									"        pm.expect(todo).to.have.property('text');\r",
+									"        pm.expect(todo).to.have.property('isComplete');\r",
+									"        pm.expect(todo).to.have.property('user');\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"text\": \"Buy groceries\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/todo/fetch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"todo",
+								"fetch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTask",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Todo was updated\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.todo).to.exist;\r",
+									"    pm.expect(jsonData.todo.text).to.eql(\"Buy groceries and vegetables\");\r",
+									"    pm.expect(jsonData.todo.isComplete).to.eql(true);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Todo has required fields\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var todo = jsonData.todo;\r",
+									"    \r",
+									"    pm.expect(todo).to.have.property('_id');\r",
+									"    pm.expect(todo).to.have.property('text');\r",
+									"    pm.expect(todo).to.have.property('isComplete');\r",
+									"    pm.expect(todo).to.have.property('user');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"text\": \"Buy groceries and vegetables\",\r\n  \"isComplete\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4001/todo/update/{{todoId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"todo",
+								"update",
+								"{{todoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTask",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4001/todo/delete/{{todoId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4001",
+							"path": [
+								"todo",
+								"delete",
+								"{{todoId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
