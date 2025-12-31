@@ -31,7 +31,7 @@ function Home() {
         setTodos(response.data.todoList);
         setError(null);
       } catch (error) {
-        setError(error);
+        setError(error.response?.data?.message || error.message || "Failed to fetch todos");
       } finally {
         setLoading(false);
       }
