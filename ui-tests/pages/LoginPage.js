@@ -16,7 +16,7 @@ class LoginPage {
   }
 
   async open() {
-    await this.driver.get("http://localhost:5173/login");
+    await this.driver.get("http://localhost:5174/login");
 
     // Wait until login form is visible
     await this.driver.wait(

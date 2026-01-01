@@ -13,10 +13,11 @@ describe("Task Management Tests", function () {
 
   before(async () => {
     // Create a test user once for all task tests
+    const timestamp = Date.now();
     testUser = {
-      email: `task@example.com`,
+      email: `task-${timestamp}@example.com`,
       password: "TestPass123!",
-      username: `taskuser-${Date.now()}`
+      username: `taskuser-${timestamp}`
     };
 
     driver = await getDriver();

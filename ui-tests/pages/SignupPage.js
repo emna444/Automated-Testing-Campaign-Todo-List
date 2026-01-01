@@ -11,7 +11,7 @@ class SignupPage {
   }
 
   async open() {
-    await this.driver.get("http://localhost:5173/signup");
+    await this.driver.get("http://localhost:5174/signup");
     await this.driver.wait(until.elementLocated(this.emailInput), 10000);
   }
 
