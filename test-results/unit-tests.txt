@@ -1,0 +1,41 @@
+
+> backend@1.0.0 test:unit
+> c8 node --test tests/unit/**/*.test.js
+
+✔ createTodo → returns 201 when todo created successfully (6.7327ms)
+✔ createTodo → returns 500 when save fails (0.4363ms)
+✔ getTodoList → returns 200 with todo list (0.1866ms)
+✔ getTodoList → returns empty array when no todos (0.1366ms)
+✔ getTodoList → returns 500 when database error (0.1425ms)
+✔ updateTodo → returns 200 when todo updated successfully (0.1742ms)
+✔ updateTodo → returns 500 when update fails (0.1167ms)
+✔ deleteTodo → returns 200 when todo deleted successfully (0.129ms)
+✔ deleteTodo → returns 404 when todo not found (0.1096ms)
+✔ deleteTodo → returns 500 when delete fails (0.1436ms)
+✔ register → returns 400 if user already exists (1.8448ms)
+✔ register → returns 400 if input invalid (0.5397ms)
+✔ register → returns 201 when valid (3.3361ms)
+✔ login → returns 200 when credentials valid (2.4135ms)
+✔ login → returns 400 incorrect password (0.1779ms)
+✔ logout → returns 200 (0.1101ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 454.3244
+---------------------|---------|----------|---------|---------|-------------------
+File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------|---------|----------|---------|---------|-------------------
+All files            |   88.14 |     92.3 |   88.88 |   88.14 |                   
+ controller          |   92.24 |     90.9 |     100 |   92.24 |                   
+  todo.controller.js |     100 |      100 |     100 |     100 |                   
+  user.controller.js |   86.84 |    81.81 |     100 |   86.84 | 42-46,64-68       
+ jwt                 |   45.83 |      100 |      50 |   45.83 |                   
+  token.js           |   45.83 |      100 |      50 |   45.83 | 11-23             
+ model               |     100 |      100 |     100 |     100 |                   
+  todo.model.js      |     100 |      100 |     100 |     100 |                   
+  user.model.js      |     100 |      100 |     100 |     100 |                   
+---------------------|---------|----------|---------|---------|-------------------

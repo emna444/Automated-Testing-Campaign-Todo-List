@@ -1,0 +1,18 @@
+
+> backend@1.0.0 test:bdd
+> cucumber-js tests/bdd/features/**/*.feature --require tests/bdd/steps/**/*.js
+
+............Signup function called {
+  username: 'testuser',
+  email: 'test@example.com',
+  password: 'password123'
+}
+...login function called
+In generateToken function
+token generated eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3QtaWQiLCJpYXQiOjE3Njc4MTE1ODgsImV4cCI6MTc2NzgxNTE4OH0.307e3hB7JPgkPxO-NC-1ggc6N2w2-P_twDo0WTwV3oQ
+...logout function called
+..
+
+7 scenarios (7 passed)
+20 steps (20 passed)
+0m00.198s (executing steps: 0m00.188s)

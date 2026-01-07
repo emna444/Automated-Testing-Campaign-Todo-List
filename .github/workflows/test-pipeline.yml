@@ -1,0 +1,375 @@
+name: Automated Testing Pipeline
+
+on:
+  push:
+    branches: [ '**']
+  pull_request:
+    branches: [ '**' ]
+  workflow_dispatch:
+
+jobs:
+  build-and-setup:
+    name: Build & Setup
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            ui-tests/package-lock.json
+      
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Install UI test dependencies
+        working-directory: ./ui-tests
+        run: npm ci
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            backend/node_modules
+            frontend/node_modules
+            ui-tests/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: build-and-setup
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run unit tests with coverage
+        working-directory: ./backend
+        run: |
+          npm run test:unit -- --experimental-test-coverage 2>&1 | tee unit-test-results.txt
+        continue-on-error: true
+      
+      - name: Generate coverage report
+        working-directory: ./backend
+        run: |
+          if [ -d "coverage" ]; then
+            echo "Coverage report generated"
+            ls -la coverage/
+          fi
+      
+      - name: Upload unit test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: backend/unit-test-results.txt
+      
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: backend/coverage/
+
+  integration-tests:
+    name: Integration Tests (BDD)
+    runs-on: ubuntu-latest
+    needs: build-and-setup
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Start backend server
+        working-directory: ./backend
+        env:
+          MONGODB_URI: mongodb://localhost:27017/todo_test
+          PORT: 4001
+        run: |
+          npm start &
+          sleep 5
+      
+      - name: Run BDD tests
+        working-directory: ./backend
+        run: |
+          npm run test:bdd 2>&1 | tee bdd-test-results.txt
+        continue-on-error: true
+      
+      - name: Upload BDD test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-test-results
+          path: backend/bdd-test-results.txt
+
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    needs: build-and-setup
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Start backend server
+        working-directory: ./backend
+        env:
+          MONGODB_URI: mongodb://localhost:27017/todo_test
+          PORT: 4001
+        run: |
+          npm start &
+          sleep 5
+      
+      - name: Run API tests
+        working-directory: ./backend
+        run: |
+          npm run test:api -- --reporters cli,json --reporter-json-export api-test-results.json 2>&1 | tee api-test-results.txt
+        continue-on-error: true
+      
+      - name: Upload API test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: |
+            backend/api-test-results.txt
+            backend/api-test-results.json
+
+  ui-tests:
+    name: UI Tests
+    runs-on: ubuntu-latest
+    needs: build-and-setup
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Install UI test dependencies
+        working-directory: ./ui-tests
+        run: npm ci
+      
+      - name: Start backend server
+        working-directory: ./backend
+        env:
+          MONGODB_URI: mongodb://localhost:27017/todo_test
+          PORT: 4001
+        run: |
+          npm start &
+          sleep 5
+      
+      - name: Build and start frontend
+        working-directory: ./frontend
+        run: |
+          npm run build
+          npm run preview &
+          sleep 5
+      
+      - name: Run UI tests
+        working-directory: ./ui-tests
+        run: |
+          npm test 2>&1 | tee ui-test-results.txt
+        continue-on-error: true
+      
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results
+          path: ui-tests/ui-test-results.txt
+
+  test-reporting:
+    name: Test Reporting & Metrics
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, api-tests, ui-tests]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          path: test-results
+      
+      - name: Generate test metrics report
+        run: |
+          cat > test-results/test-metrics.md << 'EOF'
+          # Test Automation Metrics Report
+          
+          ## Pipeline Execution Summary
+          - **Date**: $(date)
+          - **Branch**: ${{ github.ref_name }}
+          - **Commit**: ${{ github.sha }}
+          
+          ## Quality Metrics
+          
+          ### 1. Code Coverage
+          EOF
+          
+          if [ -d "test-results/coverage-report" ]; then
+            echo "Coverage reports available in artifacts" >> test-results/test-metrics.md
+          fi
+          
+          cat >> test-results/test-metrics.md << 'EOF'
+          
+          ### 2. Test Execution Results
+          
+          #### Unit Tests
+          EOF
+          
+          if [ -f "test-results/unit-test-results/unit-test-results.txt" ]; then
+            echo '```' >> test-results/test-metrics.md
+            tail -20 test-results/unit-test-results/unit-test-results.txt >> test-results/test-metrics.md
+            echo '```' >> test-results/test-metrics.md
+          fi
+          
+          cat >> test-results/test-metrics.md << 'EOF'
+          
+          #### BDD Tests
+          EOF
+          
+          if [ -f "test-results/bdd-test-results/bdd-test-results.txt" ]; then
+            echo '```' >> test-results/test-metrics.md
+            tail -20 test-results/bdd-test-results/bdd-test-results.txt >> test-results/test-metrics.md
+            echo '```' >> test-results/test-metrics.md
+          fi
+          
+          cat >> test-results/test-metrics.md << 'EOF'
+          
+          #### API Tests
+          EOF
+          
+          if [ -f "test-results/api-test-results/api-test-results.txt" ]; then
+            echo '```' >> test-results/test-metrics.md
+            tail -30 test-results/api-test-results/api-test-results.txt >> test-results/test-metrics.md
+            echo '```' >> test-results/test-metrics.md
+          fi
+          
+          cat >> test-results/test-metrics.md << 'EOF'
+          
+          #### UI Tests
+          EOF
+          
+          if [ -f "test-results/ui-test-results/ui-test-results.txt" ]; then
+            echo '```' >> test-results/test-metrics.md
+            tail -20 test-results/ui-test-results/ui-test-results.txt >> test-results/test-metrics.md
+            echo '```' >> test-results/test-metrics.md
+          fi
+          
+          cat >> test-results/test-metrics.md << 'EOF'
+          
+          ### 3. Test Execution Time
+          - Total Pipeline Duration: Available in GitHub Actions summary
+          
+          ### 4. Pass/Fail Rate
+          - Check individual test stage results above
+          
+          ### 5. Defects Found
+          - Review failed test cases in the artifacts
+          EOF
+          
+          cat test-results/test-metrics.md
+      
+      - name: Upload consolidated metrics report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-metrics-report
+          path: test-results/test-metrics.md
+      
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('test-results/test-metrics.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

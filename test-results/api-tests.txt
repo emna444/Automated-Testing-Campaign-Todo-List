@@ -1,0 +1,81 @@
+
+> backend@1.0.0 test:api
+> newman run tests/api/"Todo API Tests.postman_collection.json"
+
+newman
+
+Todo API Tests
+
+□ Authentication
+└ Register - Success
+  POST http://localhost:4001/user/sign-up [201 Created, 518B, 107ms]
+  √  Status code is 201
+  √  Response contains success message
+
+└ Register - Email Already Exists
+  POST http://localhost:4001/user/sign-up [400 Bad Request, 309B, 6ms]
+  √  Status code is 400
+  √  Message indicates user already exists
+
+└ Register - Invalid Input
+  POST http://localhost:4001/user/sign-up [400 Bad Request, 417B, 3ms]
+  √  Status code is 400 (invalid input)
+  √  Validation errors exist
+
+└ Login-Success
+  POST http://localhost:4001/user/sign-in [200 OK, 480B, 65ms]
+  √  Status code is 200
+  ┌
+  │ '✅ Token saved:', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
+  │ 9.eyJpZCI6IjY5NWVhYTA1MjJhYzQwMTkyYjhjMTIxYiIsImlhdCI6
+  │ MTc2NzgxMTU5MCwiZXhwIjoxNzY3ODE1MTkwfQ.EuucQKXEVtfCiFX
+  │ psgR7VSNy_pm6_3bB0YAz0HP4tpo'
+  └
+  √  Save token
+
+└ Login-Wrong Password
+  POST http://localhost:4001/user/sign-in [400 Bad Request, 309B, 61ms]
+  √  Status code is 400 
+  √  User is not logged in
+
+└ Logout-Success
+  GET http://localhost:4001/user/logout [200 OK, 298B, 3ms]
+  √  Logout returns 200
+  √  Logout message
+
+□ Todo CRUD
+└ CreateTask
+  POST http://localhost:4001/todo/create [201 Created, 436B, 7ms]
+  √  Todo created
+
+└ GetAllTasks
+  GET http://localhost:4001/todo/fetch [200 OK, 439B, 6ms]
+  √  Todos fetched
+
+└ UpdateTask
+  PUT http://localhost:4001/todo/update/695eaa0622ac40192b8c1220 [200 OK, 447B, 7ms]
+  √  Status code is 200
+
+└ DeleteTask
+  DELETE http://localhost:4001/todo/delete/695eaa0622ac40192b8c1220 [200 OK, 447B, 6ms]
+  √  Todo deleted
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                10 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                10 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 5 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                16 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 1092ms                                     │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 1.39kB (approx)                           │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 27ms [min: 3ms, max: 107ms, s.d.: 35ms] │
+└────────────────────────────────────────────────────────────────┘

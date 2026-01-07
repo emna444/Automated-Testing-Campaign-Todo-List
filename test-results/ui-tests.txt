@@ -1,0 +1,25 @@
+
+> ui-tests@1.0.0 test
+> mocha ./tests/**/*.js --reporter spec
+
+
+
+  Authentication Tests
+    ✔ TC-A001: Signup with valid inputs (4085ms)
+    ✔ TC-A002: Signup with missing fields (1436ms)
+    ✔ TC-A003: Signup with invalid email (2050ms)
+    ✔ TC-A004: Login with valid credentials (4296ms)
+    ✔ TC-A005: Login with wrong password (3615ms)
+    ✔ TC-A006: Login with missing fields (1382ms)
+
+  Task Management Tests
+    ✔ TC-T001: Create task with valid title (1822ms)
+    ✔ TC-T002: Prevent adding empty task (1297ms)
+    ✔ TC-T003: Edit an existing task (1272ms)
+    ✔ TC-T004: Delete a task (3274ms)
+    ✔ TC-T005: Mark task as complete (3038ms)
+    ✔ TC-A007: Logout successfully (1397ms)
+
+
+  12 passing (1m)
+

@@ -1,0 +1,41 @@
+{
+  "startTime": 1767811585239,
+  "stages": {
+    "setup": {
+      "duration": 1128,
+      "status": "passed"
+    },
+    "unit": {
+      "duration": 1391,
+      "status": "passed",
+      "passed": 16,
+      "failed": 0,
+      "total": 16
+    },
+    "bdd": {
+      "duration": 1134,
+      "status": "passed",
+      "passed": 7,
+      "failed": 0,
+      "total": 7
+    },
+    "api": {
+      "duration": 2082,
+      "status": "passed",
+      "passed": 16,
+      "failed": 0,
+      "total": 16
+    },
+    "ui": {
+      "duration": 70507,
+      "status": "passed",
+      "passed": 12,
+      "failed": 0,
+      "total": 12
+    }
+  },
+  "totalTests": 51,
+  "passedTests": 51,
+  "failedTests": 0,
+  "coverage": null
+}
