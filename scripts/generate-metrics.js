@@ -78,9 +78,21 @@ const parseUnitTests = (content) => {
   }
 
   // Extract failed tests as defects
-  const failedTestRegex = /✖ (.+?) \((\d+\.?\d*)ms\)/g;
+  // Look for Node.js test runner failure pattern: "not ok N - test name"
+  const failedTestRegex = /not ok \d+ - (.+)/g;
   let match;
   while ((match = failedTestRegex.exec(content)) !== null) {
+    results.defects.push({
+      type: 'Unit Test Failure',
+      name: match[1],
+      severity: 'HIGH',
+      category: 'Functional',
+    });
+  }
+  
+  // Also look for old format: ✖ test name (Xms)
+  const oldFormatRegex = /✖ (.+?) \((\d+\.?\d*)ms\)/g;
+  while ((match = oldFormatRegex.exec(content)) !== null) {
     results.defects.push({
       type: 'Unit Test Failure',
       name: match[1],
