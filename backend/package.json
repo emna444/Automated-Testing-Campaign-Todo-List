@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "c8 node --test tests/unit/**/*.test.js",
-    "test:unit": "c8 node --test tests/unit/**/*.test.js",
+    "test": "c8 node --test tests/unit/*.test.js",
+    "test:unit": "c8 node --test tests/unit/*.test.js",
     "test:bdd": "cucumber-js tests/bdd/features/**/*.feature --require tests/bdd/steps/**/*.js",
     "test:api": "newman run tests/api/\"Todo API Tests.postman_collection.json\"",
     "start": "nodemon index.js"

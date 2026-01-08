@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-setup:
-    name: Build & Setup
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
     
     steps:
@@ -23,45 +23,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
-            ui-tests/package-lock.json
-      
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm ci
-      
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm ci
-      
-      - name: Install UI test dependencies
-        working-directory: ./ui-tests
-        run: npm ci
-      
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            backend/node_modules
-            frontend/node_modules
-            ui-tests/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: build-and-setup
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          cache-dependency-path: 'backend/package-lock.json'
       
       - name: Install dependencies
         working-directory: ./backend
@@ -73,14 +35,14 @@ jobs:
           set -o pipefail
           npm run test:unit 2>&1 | tee unit-test-results.txt
       
-      - name: Upload unit test results
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unit-test-results
           path: backend/unit-test-results.txt
       
-      - name: Upload coverage report
+      - name: Upload coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -90,7 +52,6 @@ jobs:
   integration-tests:
     name: Integration Tests (BDD)
     runs-on: ubuntu-latest
-    needs: build-and-setup
     
     services:
       mongodb:
@@ -131,7 +92,7 @@ jobs:
           set -o pipefail
           npm run test:bdd 2>&1 | tee bdd-test-results.txt
       
-      - name: Upload BDD test results
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -141,7 +102,6 @@ jobs:
   api-tests:
     name: API Tests
     runs-on: ubuntu-latest
-    needs: build-and-setup
     
     services:
       mongodb:
@@ -162,6 +122,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
       
       - name: Install dependencies
         working-directory: ./backend
@@ -182,7 +144,7 @@ jobs:
           set -o pipefail
           npm run test:api -- --reporters cli,json --reporter-json-export api-test-results.json 2>&1 | tee api-test-results.txt
       
-      - name: Upload API test results
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -194,7 +156,6 @@ jobs:
   ui-tests:
     name: UI Tests
     runs-on: ubuntu-latest
-    needs: build-and-setup
     
     services:
       mongodb:
@@ -215,6 +176,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            ui-tests/package-lock.json
       
       - name: Install backend dependencies
         working-directory: ./backend
@@ -256,7 +222,7 @@ jobs:
           set -o pipefail
           npm test 2>&1 | tee ui-test-results.txt
       
-      - name: Upload UI test results
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -264,7 +230,7 @@ jobs:
           path: ui-tests/ui-test-results.txt
 
   test-reporting:
-    name: Test Reporting & Metrics
+    name: Test Reporting & Quality Gates
     runs-on: ubuntu-latest
     needs: [unit-tests, integration-tests, api-tests, ui-tests]
     if: always()
@@ -310,15 +276,12 @@ jobs:
           fi
       
       - name: Generate automated metrics report
-        run: |
-          node scripts/generate-metrics.js
-        continue-on-error: true
+        run: node scripts/generate-metrics.js
       
       - name: Display metrics summary
         if: always()
         run: |
           echo "📊 Test Metrics Generated"
-          echo ""
           if [ -f "test-results/metrics.json" ]; then
             cat test-results/metrics.json
           fi
@@ -328,71 +291,16 @@ jobs:
         if: always()
         with:
           name: metrics-report
-          path: |
-            test-results/METRICS-REPORT.md
-            test-results/metrics.json
-            backend/unit-test-results.txt
-            backend/bdd-test-results.txt
-            backend/api-test-results.txt
-            backend/api-test-results.json
-            ui-tests/ui-test-results.txt
-      
-      - name: Comment PR with metrics
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            
-            let report = '# 🧪 Test Automation Results\n\n';
-            
-            if (fs.existsSync('test-results/METRICS-REPORT.md')) {
-              const fullReport = fs.readFileSync('test-results/METRICS-REPORT.md', 'utf8');
-              
-              // Extract only executive summary for PR comment
-              const summaryMatch = fullReport.match(/## 📊 Executive Summary([\s\S]*?)---/);
-              if (summaryMatch) {
-                report += summaryMatch[0];
-              }
-              
-              // Add quality gates
-              const gatesMatch = fullReport.match(/## 5\. Quality Gates Status([\s\S]*?)---/);
-              if (gatesMatch) {
-                report += '\n' + gatesMatch[0];
-              }
-              
-              report += '\n📄 **Full Report**: Download the `metrics-report` artifact for detailed analysis.\n';
-            } else {
-              report += '⚠️ Metrics report generation failed. Check workflow logs.\n';
-            }
-            
-            try {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: report
-              });
-            } catch (error) {
-              console.log('Could not post comment:', error.message);
-            }
+          path: test-results/
       
       - name: Evaluate quality gates
-        if: always()
         run: |
-          if [ -f "test-results/metrics.json" ]; then
-            # Check if quality gates passed
-            STATUS=$(cat test-results/metrics.json | grep -o '"overall":"[^"]*"' | cut -d'"' -f4 || echo "UNKNOWN")
-            
-            echo "Quality Gate Status: $STATUS"
-            
-            if [[ "$STATUS" == *"FAILED"* ]]; then
-              echo "❌ Quality gates failed!"
-              echo "::error::Quality gates failed. Check metrics report for details."
-              exit 1
-            else
-              echo "✅ All quality gates passed!"
-            fi
+          STATUS=$(cat test-results/metrics.json | grep -o '"overall":"[^"]*"' | cut -d'"' -f4)
+          echo "Quality Gate Status: $STATUS"
+          
+          if [[ "$STATUS" == *"FAILED"* ]]; then
+            echo "❌ Quality gates failed!"
+            exit 1
           else
-            echo "⚠️ No metrics file found, skipping quality gate check"
+            echo "✅ All quality gates passed!"
           fi
