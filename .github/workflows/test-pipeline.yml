@@ -68,7 +68,7 @@ jobs:
       - name: Run unit tests with coverage
         working-directory: ./backend
         run: |
-          npm run test:unit -- --experimental-test-coverage 2>&1 | tee unit-test-results.txt
+          npm run test:unit 2>&1 | tee unit-test-results.txt
         continue-on-error: true
       
       - name: Generate coverage report
