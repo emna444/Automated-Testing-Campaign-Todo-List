@@ -14,11 +14,11 @@
   "c8": {
     "include": [
       "controller/**/*.js",
-      "model/**/*.js"
+      "model/**/*.js",
+      "jwt/**/*.js",
+      "routes/**/*.js"
     ],
     "exclude": [
-      "jwt/**",
-      "routes/**",
       "tests/**",
       "node_modules/**",
       "coverage/**"
