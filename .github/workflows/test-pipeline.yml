@@ -249,8 +249,9 @@ jobs:
         working-directory: ./frontend
         run: |
           npm run build
-          npm run preview &
-          sleep 5
+          npm run preview -- --port 5174 --host 0.0.0.0 &
+          sleep 10
+          curl -f http://localhost:5174 || echo "Frontend not ready yet"
       
       - name: Run UI tests
         working-directory: ./ui-tests
