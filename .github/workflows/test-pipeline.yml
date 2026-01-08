@@ -70,6 +70,7 @@ jobs:
       - name: Run unit tests with coverage
         working-directory: ./backend
         run: |
+          set -o pipefail
           npm run test:unit 2>&1 | tee unit-test-results.txt
       
       - name: Generate coverage report
@@ -128,6 +129,7 @@ jobs:
       - name: Run BDD tests
         working-directory: ./backend
         run: |
+          set -o pipefail
           npm run test:bdd 2>&1 | tee bdd-test-results.txt
 
   api-tests:
@@ -171,6 +173,7 @@ jobs:
       - name: Run API tests
         working-directory: ./backend
         run: |
+          set -o pipefail
           npm run test:api -- --reporters cli,json --reporter-json-export api-test-results.json 2>&1 | tee api-test-results.txt
 
   ui-tests:
@@ -235,6 +238,7 @@ jobs:
       - name: Run UI tests
         working-directory: ./ui-tests
         run: |
+          set -o pipefail
           npm test 2>&1 | tee ui-test-results.txt
         continue-on-error: true
 
