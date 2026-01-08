@@ -60,16 +60,32 @@ const parseUnitTests = (content) => {
     defects: [],
   };
 
-  // Extract test counts
+  // Extract test counts - Support both formats
+  // Format 1: ℹ pass 16, ℹ fail 0, ℹ tests 16
   const passMatch = content.match(/ℹ pass (\d+)/);
   const failMatch = content.match(/ℹ fail (\d+)/);
   const testsMatch = content.match(/ℹ tests (\d+)/);
-  const durationMatch = content.match(/ℹ duration_ms ([\d.]+)/);
-
+  
+  // Format 2 (TAP format): # tests 16, # pass 16, # fail 0
+  const tapTestsMatch = content.match(/# tests (\d+)/);
+  const tapPassMatch = content.match(/# pass (\d+)/);
+  const tapFailMatch = content.match(/# fail (\d+)/);
+  
+  // Use whichever format is present
   if (passMatch) results.passed = parseInt(passMatch[1]);
+  else if (tapPassMatch) results.passed = parseInt(tapPassMatch[1]);
+  
   if (failMatch) results.failed = parseInt(failMatch[1]);
+  else if (tapFailMatch) results.failed = parseInt(tapFailMatch[1]);
+  
   if (testsMatch) results.total = parseInt(testsMatch[1]);
+  else if (tapTestsMatch) results.total = parseInt(tapTestsMatch[1]);
+  
+  const durationMatch = content.match(/ℹ duration_ms ([\d.]+)/);
+  const tapDurationMatch = content.match(/# duration_ms ([\d.]+)/);
+  
   if (durationMatch) results.duration = parseFloat(durationMatch[1]);
+  else if (tapDurationMatch) results.duration = parseFloat(tapDurationMatch[1]);
 
   // Extract coverage
   const coverageMatch = content.match(/All files\s+\|\s+([\d.]+)/);
