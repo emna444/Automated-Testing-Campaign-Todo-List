@@ -36,6 +36,17 @@ function createRes() {
 // CREATE TODO TESTS
 // ===================================
 
+test("createTodo → INTENTIONAL FAILING TEST for defect detection", async () => {
+  // This test is designed to fail to verify defect detection
+  const req = { body: { text: "Test todo", user: "user123" } };
+  const res = createRes();
+  
+  await createTodo(req, res);
+  
+  // Intentionally wrong assertion to trigger a defect
+  assert.strictEqual(res.statusCode, 999, "This should fail - checking defect detection");
+});
+
 test("createTodo → returns 201 when todo created successfully", async () => {
   // Mock the save method
   TodoModel.prototype.save = async function() {
