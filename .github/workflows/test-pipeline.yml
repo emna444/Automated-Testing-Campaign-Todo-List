@@ -125,6 +125,13 @@ jobs:
         run: |
           set -o pipefail
           npm run test:bdd 2>&1 | tee bdd-test-results.txt
+      
+      - name: Upload BDD test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bdd-test-results
+          path: backend/bdd-test-results.txt
 
   api-tests:
     name: API Tests
@@ -169,6 +176,15 @@ jobs:
         run: |
           set -o pipefail
           npm run test:api -- --reporters cli,json --reporter-json-export api-test-results.json 2>&1 | tee api-test-results.txt
+      
+      - name: Upload API test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: |
+            backend/api-test-results.txt
+            backend/api-test-results.json
 
   ui-tests:
     name: UI Tests
@@ -243,6 +259,13 @@ jobs:
           path: ui-tests/ui-test-results.txt
 
   test-reporting:
+    name: Test Reporting & Metrics
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, api-tests, ui-tests]
+    if: always()
+    
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Setup Node.js
@@ -310,11 +333,6 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            backend/unit-test-results.txt
-            backend/bdd-test-results.txt
-            backend/api-test-results.txt
-            backend/api-test-results.json
-            ui-tests/ui-test-results.txt
             
             let report = '# 🧪 Test Automation Results\n\n';
             
