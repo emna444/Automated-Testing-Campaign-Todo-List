@@ -233,10 +233,12 @@ const parseUiTests = (content) => {
   if (failMatch) results.failed = parseInt(failMatch[1]);
   results.total = results.passed + results.failed;
 
-  // Extract duration
-  const durationMatch = content.match(/(\d+)m/);
+  // Extract duration (e.g., "1m" or "12 passing (1m)")
+  const durationMatch = content.match(/(\d+)m(?:\s+(\d+)s)?/);
   if (durationMatch) {
-    results.duration = parseInt(durationMatch[1]) * 60 * 1000;
+    const minutes = parseInt(durationMatch[1]) || 0;
+    const seconds = parseInt(durationMatch[2]) || 0;
+    results.duration = (minutes * 60 + seconds) * 1000;
   }
 
   // Extract failed tests as defects
