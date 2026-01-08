@@ -231,6 +231,11 @@ jobs:
         working-directory: ./ui-tests
         run: npm ci
       
+      - name: Install Chrome and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+      
       - name: Start backend server
         working-directory: ./backend
         env:
