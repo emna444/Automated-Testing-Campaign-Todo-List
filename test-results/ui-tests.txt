@@ -5,20 +5,20 @@
 
 
   Authentication Tests
-    ✔ TC-A001: Signup with valid inputs (4085ms)
-    ✔ TC-A002: Signup with missing fields (1436ms)
-    ✔ TC-A003: Signup with invalid email (2050ms)
-    ✔ TC-A004: Login with valid credentials (4296ms)
-    ✔ TC-A005: Login with wrong password (3615ms)
-    ✔ TC-A006: Login with missing fields (1382ms)
+    ✔ TC-A001: Signup with valid inputs (4225ms)
+    ✔ TC-A002: Signup with missing fields (1699ms)
+    ✔ TC-A003: Signup with invalid email (2353ms)
+    ✔ TC-A004: Login with valid credentials (4234ms)
+    ✔ TC-A005: Login with wrong password (3933ms)
+    ✔ TC-A006: Login with missing fields (1745ms)
 
   Task Management Tests
-    ✔ TC-T001: Create task with valid title (1822ms)
-    ✔ TC-T002: Prevent adding empty task (1297ms)
-    ✔ TC-T003: Edit an existing task (1272ms)
-    ✔ TC-T004: Delete a task (3274ms)
-    ✔ TC-T005: Mark task as complete (3038ms)
-    ✔ TC-A007: Logout successfully (1397ms)
+    ✔ TC-T001: Create task with valid title (1798ms)
+    ✔ TC-T002: Prevent adding empty task (1303ms)
+    ✔ TC-T003: Edit an existing task (1316ms)
+    ✔ TC-T004: Delete a task (3250ms)
+    ✔ TC-T005: Mark task as complete (3035ms)
+    ✔ TC-A007: Logout successfully (1389ms)
 
 
   12 passing (1m)

@@ -78,22 +78,9 @@ jobs:
         if: always()
         with:
           name: unit-test-results
-          path: backend/unit-test-results.txt
-      
-      - name: Generate coverage report
-        working-directory: ./backend
-        run: |
-          if [ -d "coverage" ]; then
-            echo "Coverage report generated"
-            ls -la coverage/
-          fi
-      
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: backend/coverage/
+          path: |
+            backend/unit-test-results.txt
+            backend/coverage/
 
   integration-tests:
     name: Integration Tests (BDD)
@@ -339,18 +326,6 @@ jobs:
           path: |
             test-results/METRICS-REPORT.md
             test-results/metrics.json
-            backend/unit-test-results.txt
-            backend/bdd-test-results.txt
-            backend/api-test-results.txt
-            backend/api-test-results.json
-            ui-tests/ui-test-results.txt
-      
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-html-report
-          path: coverage-report/
       
       - name: Comment PR with metrics
         if: github.event_name == 'pull_request'

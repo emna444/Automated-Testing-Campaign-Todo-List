@@ -9,10 +9,10 @@
 }
 ...login function called
 In generateToken function
-token generated eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3QtaWQiLCJpYXQiOjE3Njc4MTE1ODgsImV4cCI6MTc2NzgxNTE4OH0.307e3hB7JPgkPxO-NC-1ggc6N2w2-P_twDo0WTwV3oQ
+token generated eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3QtaWQiLCJpYXQiOjE3Njc4NzMyNTgsImV4cCI6MTc2Nzg3Njg1OH0.Iiha0A3WPRdFXteVHlzJN-qMvM5CqCZF7a7vN4xIn_Q
 ...logout function called
 ..
 
 7 scenarios (7 passed)
 20 steps (20 passed)
-0m00.198s (executing steps: 0m00.188s)
+0m00.217s (executing steps: 0m00.205s)

@@ -1,25 +1,25 @@
 # Test Automation Metrics Report
 
 ## Execution Summary
-- **Date**: 07/01/2026 7:47:41 PM
-- **Total Duration**: 76.25s
+- **Date**: 08/01/2026 12:55:34 PM
+- **Total Duration**: 79.89s
 - **Status**: ✅ PASSED
 
 ## Quality Metrics
 
 ### 1. Code Coverage
-- **Coverage**: 88.14%
+- **Coverage**: 75.33%
 - **Report Location**: `backend/coverage/lcov-report/index.html`
 
 ### 2. Test Execution Time
 | Stage | Duration | Status |
 |-------|----------|--------|
-| Setup | 1.13s | ✅ |
-| Unit Tests | 1.39s | ✅ |
-| BDD Tests | 1.13s | ✅ |
-| API Tests | 2.08s | ✅ |
-| UI Tests | 70.51s | ✅ |
-| **Total** | **76.25s** | |
+| Setup | 1.25s | ✅ |
+| Unit Tests | 1.17s | ✅ |
+| BDD Tests | 1.29s | ✅ |
+| API Tests | 2.36s | ✅ |
+| UI Tests | 73.81s | ✅ |
+| **Total** | **79.89s** | |
 
 ### 3. Pass/Fail Rate
 - **Total Tests**: 51
