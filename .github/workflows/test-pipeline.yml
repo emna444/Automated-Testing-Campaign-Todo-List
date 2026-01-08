@@ -5,6 +5,8 @@ on:
     branches: [ '**']
   pull_request:
     branches: [ '**' ]
+  schedule:
+    - cron: '0 2 * * *'  # Runs every night at 2:00 AM UTC
   workflow_dispatch:
 
 jobs:
