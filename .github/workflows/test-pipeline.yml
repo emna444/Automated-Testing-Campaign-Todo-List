@@ -73,6 +73,13 @@ jobs:
           set -o pipefail
           npm run test:unit 2>&1 | tee unit-test-results.txt
       
+      - name: Upload unit test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: backend/unit-test-results.txt
+      
       - name: Generate coverage report
         working-directory: ./backend
         run: |
@@ -131,6 +138,13 @@ jobs:
         run: |
           set -o pipefail
           npm run test:bdd 2>&1 | tee bdd-test-results.txt
+      
+      - name: Upload BDD test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bdd-test-results
+          path: backend/bdd-test-results.txt
 
   api-tests:
     name: API Tests
@@ -175,6 +189,15 @@ jobs:
         run: |
           set -o pipefail
           npm run test:api -- --reporters cli,json --reporter-json-export api-test-results.json 2>&1 | tee api-test-results.txt
+      
+      - name: Upload API test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: |
+            backend/api-test-results.txt
+            backend/api-test-results.json
 
   ui-tests:
     name: UI Tests
@@ -240,8 +263,13 @@ jobs:
         run: |
           set -o pipefail
           npm test 2>&1 | tee ui-test-results.txt
-        continue-on-error: true
-
+      
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-test-results
+          path: ui-tests/ui-test-results.txt
 
   test-reporting:
     name: Test Reporting & Metrics
