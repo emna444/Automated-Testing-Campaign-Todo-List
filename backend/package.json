@@ -5,9 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "c8 --reporter=text --reporter=lcov --reporter=html node --test tests/unit/todo.test.js tests/unit/user.test.js",
-    "test:unit": "c8 --reporter=text --reporter=lcov --reporter=html node --test tests/unit/todo.test.js tests/unit/user.test.js",
-    "test:unit:coverage": "c8 --reporter=html --reporter=text --reporter=lcov node --test tests/unit/todo.test.js tests/unit/user.test.js",
+    "test": "c8 node --test tests/unit/**/*.test.js",
+    "test:unit": "c8 node --test tests/unit/**/*.test.js",
     "test:bdd": "cucumber-js tests/bdd/features/**/*.feature --require tests/bdd/steps/**/*.js",
     "test:api": "newman run tests/api/\"Todo API Tests.postman_collection.json\"",
     "start": "nodemon index.js"
@@ -15,15 +14,16 @@
   "c8": {
     "include": [
       "controller/**/*.js",
-      "model/**/*.js",
-      "jwt/**/*.js",
-      "routes/**/*.js"
+      "model/**/*.js"
     ],
     "exclude": [
+      "jwt/**",
+      "routes/**",
       "tests/**",
       "node_modules/**",
       "coverage/**"
     ],
+    "reporter": ["text", "lcov", "html"],
     "all": true
   },
   "author": "Harshit Shankhdhar",
