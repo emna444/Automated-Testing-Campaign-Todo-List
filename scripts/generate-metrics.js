@@ -234,7 +234,8 @@ const parseUiTests = (content) => {
   results.total = results.passed + results.failed;
 
   // Extract duration (e.g., "1m" or "12 passing (1m)")
-  const durationMatch = content.match(/(\d+)m(?:\s+(\d+)s)?/);
+  // Use negative lookahead to avoid matching "ms" in milliseconds like "3880ms"
+  const durationMatch = content.match(/(\d+)m(?!s)(?:\s+(\d+)s)?/);
   if (durationMatch) {
     const minutes = parseInt(durationMatch[1]) || 0;
     const seconds = parseInt(durationMatch[2]) || 0;
