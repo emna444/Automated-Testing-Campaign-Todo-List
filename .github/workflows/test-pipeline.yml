@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ '**' ]
   schedule:
-    - cron: '*/5 * * * *'  # Runs every 5 minutes for testing
+    - cron: '0 2 * * *'  # Runs daily at 2:00 AM UTC (3:00 AM Paris time)
   workflow_dispatch:
 
 jobs:
