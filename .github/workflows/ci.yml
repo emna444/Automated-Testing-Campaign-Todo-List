@@ -167,3 +167,5 @@ jobs:
       
       - run: npm test
         working-directory: ./ui-tests
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
