@@ -162,8 +162,29 @@ jobs:
         working-directory: ./frontend
         run: npm run dev &
       
-      - name: Wait for servers
-        run: sleep 15
+      - name: Wait for servers to be ready
+        run: |
+          echo "Waiting for backend on port 4001..."
+          for i in {1..30}; do
+            if curl -s http://localhost:4001 > /dev/null; then
+              echo "Backend is ready!"
+              break
+            fi
+            echo "Attempt $i: Backend not ready yet..."
+            sleep 2
+          done
+          
+          echo "Waiting for frontend on port 5173..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5173 > /dev/null; then
+              echo "Frontend is ready!"
+              break
+            fi
+            echo "Attempt $i: Frontend not ready yet..."
+            sleep 2
+          done
+          
+          echo "Servers are ready, starting UI tests..."
       
       - run: npm test
         working-directory: ./ui-tests
