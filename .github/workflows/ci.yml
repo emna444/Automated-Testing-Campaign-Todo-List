@@ -21,13 +21,13 @@ jobs:
         with:
           node-version: '20'
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./backend
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./frontend
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./ui-tests
       
       - run: npm run build
@@ -58,7 +58,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./backend
       
       - name: Run unit tests
@@ -102,7 +102,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./frontend
       
       - run: npm test
@@ -135,13 +135,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./backend
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./frontend
       
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./ui-tests
       
       - name: Start backend
