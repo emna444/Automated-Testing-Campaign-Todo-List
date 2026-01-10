@@ -26,6 +26,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@babel/register": "^7.24.6",
     "@cucumber/cucumber": "^10.9.0",
     "c8": "^10.1.2",
