@@ -2,9 +2,9 @@ name: Daily Test Suite
 
 on:
   push:
-    branches: [ ui-testing ]
+    branches: [ integration ]
   pull_request:
-    branches: [ ui-testing ]
+    branches: [ integration ]
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
