@@ -91,7 +91,7 @@ describe("Authentication Tests", function () {
 
     // Verify successful login by checking URL redirects to home
     const url = await driver.getCurrentUrl();
-    expect(url).to.equal("http://localhost:5174/");
+    expect(url).to.equal("http://localhost:5173/");
     
     // Verify dashboard elements are present (confirms authentication worked)
     await driver.sleep(500);
