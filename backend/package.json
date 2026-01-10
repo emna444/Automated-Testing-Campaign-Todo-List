@@ -5,12 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/unit/**/*.test.js",
-    "test:unit": "node --test tests/unit/**/*.test.js",
+    "test": "node --test tests/unit",
+    "test:unit": "node --test tests/unit",
     "test:bdd": "cucumber-js tests/bdd/features --require tests/bdd/steps/**/*.js --require-module @babel/register",
     "test:api": "newman run tests/api/\"Todo API Tests.postman_collection.json\" -e tests/api/environment.json --reporters cli,json --reporter-json-export tests/api/results.json",
     "test:all": "npm run test:unit && npm run test:bdd && npm run test:api",
-    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov node --test tests/unit/**/*.test.js",
+    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov node --test tests/unit",
     "start": "nodemon index.js"
   },
   "author": "Harshit Shankhdhar",
