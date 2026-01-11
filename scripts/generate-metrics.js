@@ -92,26 +92,38 @@ const parseUnitTests = (content) => {
   if (coverageMatch) {
     results.coverage = parseFloat(coverageMatch[1]);
   } else {
-    // Try reading from coverage-final.json if text output doesn't have it
-    const coverageJsonPath = path.join(__dirname, '..', 'backend', 'coverage', 'coverage-final.json');
-    console.log(`[DEBUG] Looking for coverage at: ${coverageJsonPath}`);
-    const coverageData = readJsonIfExists(coverageJsonPath);
-    console.log(`[DEBUG] Coverage data found:`, coverageData ? `${Object.keys(coverageData).length} files` : 'null');
-    if (coverageData) {
-      let totalStatements = 0;
-      let coveredStatements = 0;
+    // Try reading from lcov.info if text output doesn't have it
+    const lcovPath = path.join(__dirname, '..', 'backend', 'coverage', 'lcov.info');
+    console.log(`[DEBUG] Looking for coverage at: ${lcovPath}`);
+    const lcovContent = readFileIfExists(lcovPath);
+    
+    if (lcovContent) {
+      // Parse lcov.info to calculate coverage
+      // Format: LF:total_lines, LH:lines_hit
+      const totalLinesMatch = lcovContent.match(/LF:(\d+)/g);
+      const hitLinesMatch = lcovContent.match(/LH:(\d+)/g);
       
-      Object.values(coverageData).forEach((file) => {
-        const statements = file.s || {};
-        totalStatements += Object.keys(statements).length;
-        coveredStatements += Object.values(statements).filter(count => count > 0).length;
-      });
-      
-      console.log(`[DEBUG] Total statements: ${totalStatements}, Covered: ${coveredStatements}`);
-      
-      if (totalStatements > 0) {
-        results.coverage = (coveredStatements / totalStatements) * 100;
+      if (totalLinesMatch && hitLinesMatch) {
+        let totalLines = 0;
+        let hitLines = 0;
+        
+        totalLinesMatch.forEach(match => {
+          totalLines += parseInt(match.split(':')[1]);
+        });
+        
+        hitLinesMatch.forEach(match => {
+          hitLines += parseInt(match.split(':')[1]);
+        });
+        
+        console.log(`[DEBUG] Total lines: ${totalLines}, Hit lines: ${hitLines}`);
+        
+        if (totalLines > 0) {
+          results.coverage = (hitLines / totalLines) * 100;
+          console.log(`[DEBUG] Calculated coverage: ${results.coverage.toFixed(2)}%`);
+        }
       }
+    } else {
+      console.log('[DEBUG] lcov.info not found');
     }
   }
 
