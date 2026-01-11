@@ -87,10 +87,28 @@ const parseUnitTests = (content) => {
   if (durationMatch) results.duration = parseFloat(durationMatch[1]);
   else if (tapDurationMatch) results.duration = parseFloat(tapDurationMatch[1]);
 
-  // Extract coverage
+  // Extract coverage from text output
   const coverageMatch = content.match(/All files\s+\|\s+([\d.]+)/);
   if (coverageMatch) {
     results.coverage = parseFloat(coverageMatch[1]);
+  } else {
+    // Try reading from coverage-final.json if text output doesn't have it
+    const coverageJsonPath = path.join(__dirname, '..', 'backend', 'coverage', 'coverage-final.json');
+    const coverageData = readJsonIfExists(coverageJsonPath);
+    if (coverageData) {
+      let totalStatements = 0;
+      let coveredStatements = 0;
+      
+      Object.values(coverageData).forEach((file) => {
+        const statements = file.s || {};
+        totalStatements += Object.keys(statements).length;
+        coveredStatements += Object.values(statements).filter(count => count > 0).length;
+      });
+      
+      if (totalStatements > 0) {
+        results.coverage = (coveredStatements / totalStatements) * 100;
+      }
+    }
   }
 
   // Extract failed tests as defects
