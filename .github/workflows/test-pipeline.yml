@@ -313,7 +313,23 @@ jobs:
           if [ -d "coverage-report" ]; then
             mkdir -p backend/coverage
             cp -r coverage-report/* backend/coverage/
+            echo "✅ Coverage files copied"
+            ls -la backend/coverage/
+          else
+            echo "⚠️ No coverage-report directory found"
           fi
+      
+      - name: Debug coverage files
+        run: |
+          echo "📁 Checking for coverage files..."
+          if [ -f "backend/coverage/coverage-final.json" ]; then
+            echo "✅ Found coverage-final.json"
+            ls -lh backend/coverage/coverage-final.json
+          else
+            echo "❌ coverage-final.json not found"
+          fi
+          echo "Contents of backend/coverage:"
+          ls -la backend/coverage/ || echo "Directory doesn't exist"
       
       - name: Generate automated metrics report
         run: node scripts/generate-metrics.js
