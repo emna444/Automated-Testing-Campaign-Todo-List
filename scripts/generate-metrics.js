@@ -94,7 +94,9 @@ const parseUnitTests = (content) => {
   } else {
     // Try reading from coverage-final.json if text output doesn't have it
     const coverageJsonPath = path.join(__dirname, '..', 'backend', 'coverage', 'coverage-final.json');
+    console.log(`[DEBUG] Looking for coverage at: ${coverageJsonPath}`);
     const coverageData = readJsonIfExists(coverageJsonPath);
+    console.log(`[DEBUG] Coverage data found:`, coverageData ? `${Object.keys(coverageData).length} files` : 'null');
     if (coverageData) {
       let totalStatements = 0;
       let coveredStatements = 0;
@@ -104,6 +106,8 @@ const parseUnitTests = (content) => {
         totalStatements += Object.keys(statements).length;
         coveredStatements += Object.values(statements).filter(count => count > 0).length;
       });
+      
+      console.log(`[DEBUG] Total statements: ${totalStatements}, Covered: ${coveredStatements}`);
       
       if (totalStatements > 0) {
         results.coverage = (coveredStatements / totalStatements) * 100;
