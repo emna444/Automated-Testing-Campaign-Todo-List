@@ -308,6 +308,12 @@ jobs:
             mkdir -p ui-tests
             cp ui-test-results/ui-test-results.txt ui-tests/ui-test-results.txt
           fi
+          
+          # Copy coverage report
+          if [ -d "coverage-report" ]; then
+            mkdir -p backend/coverage
+            cp -r coverage-report/* backend/coverage/
+          fi
       
       - name: Generate automated metrics report
         run: node scripts/generate-metrics.js
