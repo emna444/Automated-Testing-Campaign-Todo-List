@@ -144,3 +144,11 @@ test("logout → returns 200", async () => {
   await logout({}, res);
   assert.equal(res.statusCode, 200);
 });
+/*
+// ===================================
+// DEMO: INTENTIONAL FAILING TEST
+// ===================================
+test("DEMO → intentional failure for pipeline demo", async () => {
+  // This test intentionally fails to demonstrate error detection
+  assert.equal(1, 2, "This test fails on purpose for demo");
+});*/
