@@ -1,41 +1,41 @@
 {
-  "startTime": 1767873254817,
+  "startTime": 1768177665780,
   "stages": {
     "setup": {
-      "duration": 1252,
+      "duration": 2150,
       "status": "passed"
     },
     "unit": {
-      "duration": 1170,
+      "duration": 1217,
       "status": "passed",
       "passed": 16,
       "failed": 0,
       "total": 16
     },
     "bdd": {
-      "duration": 1291,
+      "duration": 1277,
       "status": "passed",
-      "passed": 7,
+      "passed": 0,
       "failed": 0,
-      "total": 7
+      "total": 0
     },
     "api": {
-      "duration": 2362,
+      "duration": 2788,
       "status": "passed",
       "passed": 16,
       "failed": 0,
       "total": 16
     },
     "ui": {
-      "duration": 73813,
-      "status": "passed",
-      "passed": 12,
+      "duration": 0,
+      "status": "failed",
+      "passed": 0,
       "failed": 0,
-      "total": 12
+      "total": 0
     }
   },
-  "totalTests": 51,
-  "passedTests": 51,
+  "totalTests": 32,
+  "passedTests": 32,
   "failedTests": 0,
   "coverage": null
 }

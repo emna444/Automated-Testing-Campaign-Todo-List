@@ -8,12 +8,12 @@ Todo API Tests
 
 □ Authentication
 └ Register - Success
-  POST http://localhost:4001/user/sign-up [201 Created, 518B, 122ms]
+  POST http://localhost:4001/user/sign-up [201 Created, 518B, 112ms]
   √  Status code is 201
   √  Response contains success message
 
 └ Register - Email Already Exists
-  POST http://localhost:4001/user/sign-up [400 Bad Request, 309B, 5ms]
+  POST http://localhost:4001/user/sign-up [400 Bad Request, 309B, 6ms]
   √  Status code is 400
   √  Message indicates user already exists
 
@@ -27,14 +27,14 @@ Todo API Tests
   √  Status code is 200
   ┌
   │ '✅ Token saved:', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
-  │ 9.eyJpZCI6IjY5NWY5YWViNzdhMDExNDhkZjUxZmQ0YiIsImlhdCI6
-  │ MTc2Nzg3MzI2MCwiZXhwIjoxNzY3ODc2ODYwfQ.saseogsI8_u4ZRC
-  │ pKla41XdWPlpaeSVvq26gNCr8SRE'
+  │ 9.eyJpZCI6IjY5NjQ0MDA4MWVkNzczODJiZWM0MmE5ZSIsImlhdCI6
+  │ MTc2ODE3NzY3MiwiZXhwIjoxNzY4MTgxMjcyfQ.649cl8RT0hfLf6M
+  │ wyl1Z3mZUFcTG1mir71sNa05rfOs'
   └
   √  Save token
 
 └ Login-Wrong Password
-  POST http://localhost:4001/user/sign-in [400 Bad Request, 309B, 64ms]
+  POST http://localhost:4001/user/sign-in [400 Bad Request, 309B, 4ms]
   √  Status code is 400 
   √  User is not logged in
 
@@ -45,19 +45,19 @@ Todo API Tests
 
 □ Todo CRUD
 └ CreateTask
-  POST http://localhost:4001/todo/create [201 Created, 436B, 12ms]
+  POST http://localhost:4001/todo/create [201 Created, 436B, 5ms]
   √  Todo created
 
 └ GetAllTasks
-  GET http://localhost:4001/todo/fetch [200 OK, 439B, 6ms]
+  GET http://localhost:4001/todo/fetch [200 OK, 439B, 7ms]
   √  Todos fetched
 
 └ UpdateTask
-  PUT http://localhost:4001/todo/update/695f9aec77a01148df51fd50 [200 OK, 447B, 7ms]
+  PUT http://localhost:4001/todo/update/696440081ed77382bec42aa3 [200 OK, 447B, 7ms]
   √  Status code is 200
 
 └ DeleteTask
-  DELETE http://localhost:4001/todo/delete/695f9aec77a01148df51fd50 [200 OK, 447B, 5ms]
+  DELETE http://localhost:4001/todo/delete/696440081ed77382bec42aa3 [200 OK, 447B, 8ms]
   √  Todo deleted
 
 ┌─────────────────────────┬───────────────────┬──────────────────┐
@@ -73,9 +73,9 @@ Todo API Tests
 ├─────────────────────────┼───────────────────┼──────────────────┤
 │              assertions │                16 │                0 │
 ├─────────────────────────┴───────────────────┴──────────────────┤
-│ total run duration: 1145ms                                     │
+│ total run duration: 1053ms                                     │
 ├────────────────────────────────────────────────────────────────┤
 │ total data received: 1.39kB (approx)                           │
 ├────────────────────────────────────────────────────────────────┤
-│ average response time: 29ms [min: 3ms, max: 122ms, s.d.: 38ms] │
+│ average response time: 22ms [min: 3ms, max: 112ms, s.d.: 35ms] │
 └────────────────────────────────────────────────────────────────┘

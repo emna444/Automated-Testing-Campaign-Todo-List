@@ -1,0 +1,361 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "todo-management;create-a-todo",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "Create a todo",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 3,
+            "name": "I have todo data",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:9"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 419099
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 4,
+            "name": "I create a todo",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4184399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 5,
+            "name": "I should get status 201",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 489199
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "todo-management;get-todo-list",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Get todo list",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I get my todo list",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:43"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 269699
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I should get status 200",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 89699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "todo-management;update-a-todo",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Update a todo",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "I have a todo to update",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 58700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "I update the todo",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:73"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 182800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I should get status 200",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 69200
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "todo-management;delete-a-todo",
+        "keyword": "Scenario",
+        "line": 16,
+        "name": "Delete a todo",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 17,
+            "name": "I have a todo to delete",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:96"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 59899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "I delete the todo",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\todo.steps.js:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 175600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I should get status 200",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 55500
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "todo-management",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Todo Management",
+    "tags": [],
+    "uri": "tests\\bdd\\features\\todo.feature"
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "user-authentication;register-a-user",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "Register a user",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 3,
+            "name": "I have registration data",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\user.steps.js:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 39499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 4,
+            "name": "I register",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\user.steps.js:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 72475700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 5,
+            "name": "I should get status 201",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 140099
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "user-authentication;login-with-valid-credentials",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Login with valid credentials",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I have login credentials",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\user.steps.js:43"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 70299
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 9,
+            "name": "I login",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\user.steps.js:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 126786999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 10,
+            "name": "I should get status 200",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 84400
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "I should receive a token",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:18"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 62400
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "user-authentication;logout",
+        "keyword": "Scenario",
+        "line": 13,
+        "name": "Logout",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I logout",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\user.steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 161500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "I should get status 200",
+            "match": {
+              "location": "file:\\C:\\Users\\emnad\\OneDrive\\Bureau\\ISEP\\Automated-Testing-Campaign-Todo-List\\backend\\tests\\bdd\\steps\\common.steps.js:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 43000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "user-authentication",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "User Authentication",
+    "tags": [],
+    "uri": "tests\\bdd\\features\\user.feature"
+  }
+]
